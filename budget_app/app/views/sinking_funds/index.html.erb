@@ -1,0 +1,23 @@
+<%= content_for :title, "Sinking Funds" %>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Sinking Funds</h1>
+  <p class="text-sm text-gray-500">Save up for irregular expenses</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8" id="sinking_funds_grid">
+  <% @funds.each do |fund| %>
+    <%= render "fund_card", fund: fund %>
+  <% end %>
+  <% if @funds.empty? %>
+    <div class="md:col-span-2 lg:col-span-3 text-center py-12 text-gray-400 bg-white rounded-xl border border-gray-200">
+      <p class="text-3xl mb-2">🏦</p>
+      <p class="text-sm">No sinking funds yet. Create one below!</p>
+    </div>
+  <% end %>
+</div>
+
+<!-- New Fund Form -->
+<div class="bg-white rounded-xl border border-gray-200 p-6 max-w-2xl" id="new_fund_form">
+  <%= render "new_fund_form", fund: @new_fund %>
+</div>

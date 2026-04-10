@@ -1,0 +1,11 @@
+<% if notice.present? %>
+  <div id="flash" class="bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 text-sm">
+    <%= notice %>
+  </div>
+<% elsif alert.present? %>
+  <div id="flash" class="bg-red-50 border border-red-200 text-red-800 rounded-lg px-4 py-3 text-sm">
+    <%= alert %>
+  </div>
+<% else %>
+  <div id="flash"></div>
+<% end %>

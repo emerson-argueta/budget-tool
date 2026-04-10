@@ -1,0 +1,58 @@
+<%= content_for :title, "Connect a Bank" %>
+
+<div id="plaid-status" class="flex flex-col items-center justify-center min-h-64 gap-4">
+  <div class="text-gray-400 text-sm">Opening bank connection…</div>
+</div>
+
+<script>
+  (function() {
+    const linkToken   = "<%= @link_token %>";
+    const exchangeUrl = "<%= @exchange_url %>";
+    const returnUrl   = "<%= @return_url %>";
+    const csrfToken   = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+    function setStatus(msg) {
+      document.getElementById("plaid-status").innerHTML =
+        '<div class="text-gray-500 text-sm">' + msg + '</div>';
+    }
+
+    function openLink() {
+      if (typeof Plaid === "undefined") {
+        setStatus("Plaid Link is loading…");
+        setTimeout(openLink, 200);
+        return;
+      }
+
+      var handler = Plaid.create({
+        token: linkToken,
+        onSuccess: function(publicToken, metadata) {
+          setStatus("Saving connection…");
+          fetch(exchangeUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify({ public_token: publicToken, metadata: metadata })
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.success) {
+              window.location = returnUrl + "?notice=" + encodeURIComponent("Bank connected! Syncing transactions…");
+            } else {
+              setStatus("Error: " + (data.error || "Unknown error"));
+            }
+          });
+        },
+        onExit: function(err, metadata) {
+          window.location = returnUrl;
+        }
+      });
+
+      handler.open();
+    }
+
+    // Small delay to ensure DOM + Plaid script are ready
+    setTimeout(openLink, 100);
+  })();
+</script>

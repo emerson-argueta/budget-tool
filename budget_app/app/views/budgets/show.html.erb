@@ -1,0 +1,50 @@
+<%= content_for :title, "Budget — #{@budget.month_label}" %>
+
+<div class="flex items-center justify-between mb-6">
+  <div class="flex items-center gap-4">
+    <h1 class="text-2xl font-bold text-gray-900">Budget</h1>
+    <!-- Month Selector -->
+    <%= form_with url: budgets_path, method: :get, data: { controller: "month-selector", turbo: false } do |f| %>
+      <div class="flex items-center gap-1">
+        <%# Previous month %>
+        <% prev_month = @budget.month.prev_month %>
+        <%= link_to "<", budget_path(prev_month.strftime("%Y-%m")), class: "p-1 rounded hover:bg-gray-100 text-gray-500 font-bold" %>
+
+        <%= f.select :month, @month_options,
+            { selected: @budget.to_param },
+            class: "border border-gray-300 rounded-md px-3 py-1.5 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500",
+            onchange: "window.location='/budgets/' + this.value" %>
+
+        <% next_month = @budget.month.next_month %>
+        <%= link_to ">", budget_path(next_month.strftime("%Y-%m")), class: "p-1 rounded hover:bg-gray-100 text-gray-500 font-bold" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <% prev_budget = current_user.budgets.find_by(month: @budget.month.prev_month) %>
+    <% if prev_budget %>
+      <%= button_to "Copy from #{prev_budget.month_label}",
+          copy_previous_budget_path(@budget),
+          method: :post,
+          class: "btn-secondary text-sm",
+          data: { turbo_confirm: "Copy all categories from #{prev_budget.month_label}? Existing categories won't be overwritten." } %>
+    <% end %>
+    <%= link_to "+ New Group", new_category_group_path,
+        class: "btn-secondary text-sm",
+        data: { turbo_frame: "modal" } %>
+    <%= link_to "+ Add Category", new_budget_budget_category_path(@budget),
+        class: "btn-primary",
+        data: { turbo_frame: "modal" } %>
+  </div>
+</div>
+
+<!-- Budget Summary -->
+<%= render "summary", budget: @budget %>
+
+<!-- Category Groups -->
+<div class="mt-6 space-y-6">
+  <% @categories_by_group.each do |group, categories| %>
+    <%= render "category_group", group: group, budget: @budget, categories: categories %>
+  <% end %>
+</div>

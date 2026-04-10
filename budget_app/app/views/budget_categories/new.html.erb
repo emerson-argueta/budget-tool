@@ -1,0 +1,8 @@
+<turbo-frame id="modal">
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+      <h2 class="text-lg font-semibold mb-4">Add Category</h2>
+      <%= render "form", category: @category, budget: @budget %>
+    </div>
+  </div>
+</turbo-frame>

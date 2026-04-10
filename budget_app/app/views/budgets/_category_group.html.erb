@@ -1,0 +1,28 @@
+<div id="group_<%= group.id %>" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+  <div class="px-6 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <h2 class="text-sm font-semibold text-gray-600 uppercase tracking-wide"><%= group.name %></h2>
+      <%= link_to "edit", edit_category_group_path(group),
+          class: "text-xs text-gray-400 hover:text-gray-600",
+          data: { turbo_frame: "modal" } %>
+    </div>
+    <% if categories.any? %>
+      <div class="flex gap-6 text-xs font-medium text-gray-400 uppercase tracking-wide">
+        <span class="w-28 text-right">Planned</span>
+        <span class="w-28 text-right">Spent</span>
+        <span class="w-28 text-right">Left</span>
+        <span class="w-16"></span>
+      </div>
+    <% end %>
+  </div>
+
+  <% if categories.empty? %>
+    <p class="px-6 py-4 text-sm text-gray-400 italic">No categories yet.</p>
+  <% else %>
+    <div class="divide-y divide-gray-100">
+      <% categories.each do |category| %>
+        <%= render "budgets/category_row", category: category, budget: budget %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

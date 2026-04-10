@@ -1,0 +1,46 @@
+<h2 class="text-base font-semibold text-gray-900 mb-4">New Sinking Fund</h2>
+<%= form_with model: fund, url: sinking_funds_path, data: { turbo_stream: true } do |f| %>
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex gap-2">
+      <div class="w-14">
+        <%= f.label :emoji, "Icon", class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= f.text_field :emoji, class: "w-full border border-gray-300 rounded-lg px-2 py-2 text-center text-xl focus:outline-none focus:ring-2 focus:ring-indigo-500", maxlength: 2 %>
+      </div>
+      <div class="flex-1">
+        <%= f.label :name, "Name", class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= f.text_field :name, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500", placeholder: "e.g. Car Registration" %>
+      </div>
+    </div>
+    <div>
+      <%= f.label :goal_amount, "Goal Amount", class: "block text-xs font-medium text-gray-500 mb-1" %>
+      <div class="relative">
+        <span class="absolute left-3 top-2.5 text-gray-400 text-sm">$</span>
+        <%= f.number_field :goal_amount, step: "0.01", min: 0,
+            class: "w-full border border-gray-300 rounded-lg pl-7 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500",
+            placeholder: "500.00" %>
+      </div>
+    </div>
+    <div>
+      <%= f.label :current_amount, "Current Balance", class: "block text-xs font-medium text-gray-500 mb-1" %>
+      <div class="relative">
+        <span class="absolute left-3 top-2.5 text-gray-400 text-sm">$</span>
+        <%= f.number_field :current_amount, step: "0.01", min: 0, value: 0,
+            class: "w-full border border-gray-300 rounded-lg pl-7 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+      </div>
+    </div>
+    <div>
+      <%= f.label :target_date, "Target Date", class: "block text-xs font-medium text-gray-500 mb-1" %>
+      <%= f.date_field :target_date,
+          class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+    </div>
+    <div class="col-span-2">
+      <%= f.label :notes, "Notes (optional)", class: "block text-xs font-medium text-gray-500 mb-1" %>
+      <%= f.text_area :notes, rows: 2,
+          class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500",
+          placeholder: "What is this for?" %>
+    </div>
+  </div>
+  <div class="mt-4">
+    <%= f.submit "Create Fund", class: "btn-primary" %>
+  </div>
+<% end %>

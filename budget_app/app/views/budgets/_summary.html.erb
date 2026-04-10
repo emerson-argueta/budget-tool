@@ -1,0 +1,33 @@
+<div id="budget_summary" class="grid grid-cols-3 gap-4 mb-6">
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <p class="text-sm text-gray-500 mb-1">Income</p>
+    <div class="flex items-center justify-between">
+      <span class="text-2xl font-bold text-gray-900"><%= money(budget.effective_income) %></span>
+      <%= link_to "edit", edit_budget_path(budget),
+          class: "text-xs text-indigo-600 hover:underline",
+          data: { turbo_frame: "modal" } %>
+    </div>
+    <% if budget.transaction_income > 0 %>
+      <p class="text-xs text-gray-400 mt-1">
+        <%= money(budget.transaction_income) %> from transactions
+        <% if budget.total_income > 0 %>
+          + <%= money(budget.total_income) %> manual
+        <% end %>
+      </p>
+    <% end %>
+  </div>
+
+  <% to_assign = budget.to_assign %>
+  <div class="bg-white rounded-xl border <%= to_assign.zero? ? 'border-green-300 bg-green-50' : to_assign.negative? ? 'border-red-300 bg-red-50' : 'border-amber-300 bg-amber-50' %> p-5">
+    <p class="text-sm <%= to_assign.zero? ? 'text-green-600' : to_assign.negative? ? 'text-red-600' : 'text-amber-600' %> mb-1">To Assign</p>
+    <span class="text-2xl font-bold <%= to_assign.zero? ? 'text-green-700' : to_assign.negative? ? 'text-red-700' : 'text-amber-700' %>">
+      <%= money(to_assign) %>
+      <%= "✓" if to_assign.zero? %>
+    </span>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <p class="text-sm text-gray-500 mb-1">Assigned</p>
+    <span class="text-2xl font-bold text-gray-900"><%= money(budget.total_assigned) %></span>
+  </div>
+</div>

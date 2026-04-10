@@ -1,0 +1,32 @@
+<turbo-frame id="modal">
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+       data-controller="modal"
+       data-action="click->modal#closeOnBackdrop">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6" data-modal-target="panel">
+      <h2 class="text-lg font-semibold mb-4"><%= category_group.new_record? ? "New Group" : "Edit Group" %></h2>
+
+      <%= form_with model: category_group do |f| %>
+        <div class="mb-6">
+          <%= f.label :name, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_field :name, autofocus: true, placeholder: "e.g. Housing, Food, Savings",
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <% if !category_group.new_record? %>
+            <%= button_to "Delete", category_group_path(category_group), method: :delete,
+                class: "text-sm text-red-600 hover:underline bg-transparent border-0 p-0 cursor-pointer",
+                data: { turbo_confirm: "Delete \"#{category_group.name}\"? Categories in this group will become ungrouped." } %>
+          <% else %>
+            <span></span>
+          <% end %>
+          <div class="flex gap-2">
+            <%= link_to "Cancel", budget_path(Date.today.strftime("%Y-%m")),
+                class: "btn-secondary", data: { turbo_frame: "_top" } %>
+            <%= f.submit category_group.new_record? ? "Create Group" : "Save", class: "btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</turbo-frame>

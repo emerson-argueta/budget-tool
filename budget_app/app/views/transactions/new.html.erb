@@ -1,0 +1,87 @@
+<turbo-frame id="modal">
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+       data-controller="modal"
+       data-action="click->modal#closeOnBackdrop">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6" data-modal-target="panel">
+      <h2 class="text-lg font-semibold mb-4">Add Transaction</h2>
+
+      <%= form_with model: @transaction, url: transactions_path, method: :post do |f| %>
+        <!-- Type -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="radio" name="transaction[transaction_type]" value="expense" checked
+                     class="accent-indigo-600"
+                     onchange="document.getElementById('category_row').classList.remove('hidden')">
+              Expense
+            </label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="radio" name="transaction[transaction_type]" value="income"
+                     class="accent-green-600"
+                     onchange="document.getElementById('category_row').classList.add('hidden')">
+              Income
+            </label>
+          </div>
+        </div>
+
+        <!-- Date -->
+        <div class="mb-4">
+          <%= f.label :date, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.date_field :date, value: Date.today,
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+
+        <!-- Name -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <%= f.text_field :name, placeholder: "e.g. Coffee, Grocery run",
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+
+        <!-- Amount -->
+        <div class="mb-4">
+          <%= f.label :amount, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
+            <%= f.number_field :amount, step: "0.01", min: "0", placeholder: "0.00",
+                class: "w-full border border-gray-300 rounded-lg pl-7 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+          </div>
+        </div>
+
+        <!-- Account -->
+        <div class="mb-4">
+          <%= f.label :account_id, "Account", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.collection_select :account_id,
+              @accounts,
+              :id, :display_name,
+              { include_blank: "Cash (no account)" },
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+
+        <!-- Category (hidden for income) -->
+        <div id="category_row" class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <%= f.collection_select :budget_category_id,
+              @budget_categories,
+              :id, :name,
+              { include_blank: "— Unassigned —" },
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+
+        <!-- Notes -->
+        <div class="mb-6">
+          <%= f.label :notes, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_area :notes, rows: 2, placeholder: "Optional note…",
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <%= link_to "Cancel", transactions_path, class: "btn-secondary",
+              data: { turbo_frame: "_top" } %>
+          <%= f.submit "Add Transaction", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</turbo-frame>

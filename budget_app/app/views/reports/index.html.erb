@@ -1,0 +1,96 @@
+<%= content_for :title, "Reports" %>
+<%= content_for :head do %>
+  <%= javascript_include_tag "Chart.bundle" %>
+  <%= javascript_include_tag "chartkick" %>
+<% end %>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Reports</h1>
+  <%= form_with url: reports_path, method: :get, data: { turbo: false } do |f| %>
+    <%= f.month_field :month, value: @month.strftime("%Y-%m"),
+        class: "border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+    <%= f.submit "View", class: "btn-secondary text-sm ml-2" %>
+  <% end %>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+  <!-- Spending by Category -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <h2 class="font-semibold text-gray-900 mb-4">Spending by Category — <%= @month_label %></h2>
+    <% if @spending_by_category&.any? %>
+      <%= bar_chart @spending_by_category,
+          colors: ["#6366f1"],
+          height: "280px",
+          library: { scales: { y: { ticks: { callback: "function(v) { return '$' + v.toLocaleString() }" } } } } %>
+    <% else %>
+      <p class="text-gray-400 text-sm text-center py-12">No spending data for <%= @month_label %>.</p>
+    <% end %>
+  </div>
+
+  <!-- Monthly Spending Trend -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <h2 class="font-semibold text-gray-900 mb-4">Monthly Spending (Last 6 Months)</h2>
+    <% if @monthly_trend.values.any?(&:positive?) %>
+      <%= line_chart @monthly_trend,
+          colors: ["#6366f1"],
+          height: "280px",
+          curve: false,
+          library: { scales: { y: { ticks: { callback: "function(v) { return '$' + v.toLocaleString() }" } } } } %>
+    <% else %>
+      <p class="text-gray-400 text-sm text-center py-12">No spending history yet.</p>
+    <% end %>
+  </div>
+
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+  <!-- Net Worth -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <h2 class="font-semibold text-gray-900 mb-4">Net Worth Snapshot</h2>
+    <div class="space-y-3">
+      <div class="flex items-center justify-between py-3 border-b border-gray-100">
+        <span class="text-sm text-gray-600">Total Assets (Checking/Savings)</span>
+        <span class="font-semibold text-green-600"><%= money(@net_worth[:assets]) %></span>
+      </div>
+      <div class="flex items-center justify-between py-3 border-b border-gray-100">
+        <span class="text-sm text-gray-600">Total Liabilities (Credit Cards)</span>
+        <span class="font-semibold text-red-600"><%= money(@net_worth[:liabilities]) %></span>
+      </div>
+      <div class="flex items-center justify-between py-3">
+        <span class="font-semibold text-gray-900">Net Worth</span>
+        <span class="text-xl font-bold <%= @net_worth[:net].negative? ? 'text-red-600' : 'text-green-600' %>">
+          <%= money(@net_worth[:net]) %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Merchants -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <h2 class="font-semibold text-gray-900 mb-4">Top Merchants (Last 30 Days)</h2>
+    <% if @top_merchants.any? %>
+      <div class="space-y-2">
+        <% @top_merchants.each_with_index do |(merchant, amount), i| %>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-gray-400 w-4 text-right"><%= i + 1 %></span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-0.5">
+                <span class="text-sm font-medium text-gray-900 truncate"><%= merchant %></span>
+                <span class="text-sm text-gray-700 ml-2 whitespace-nowrap"><%= money(amount) %></span>
+              </div>
+              <% max = @top_merchants.values.first.to_f %>
+              <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-indigo-400 rounded-full" style="width: <%= (amount / max * 100).round %>%"></div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-400 text-sm text-center py-12">No merchant data yet.</p>
+    <% end %>
+  </div>
+
+</div>

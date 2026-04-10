@@ -1,0 +1,61 @@
+<div id="sinking_fund_<%= fund.id %>" class="bg-white rounded-xl border border-gray-200 p-5">
+  <div class="flex items-start justify-between mb-3">
+    <div>
+      <p class="font-semibold text-gray-900 text-lg"><%= fund.emoji %> <%= fund.name %></p>
+      <% if fund.target_date %>
+        <p class="text-xs text-gray-400 mt-0.5">
+          Target: <%= fund.target_date.strftime("%b %Y") %>
+          <% if fund.months_remaining&.positive? %>
+            · <%= fund.months_remaining %> months left
+          <% end %>
+        </p>
+      <% end %>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "✎", edit_sinking_fund_path(fund),
+          class: "text-gray-400 hover:text-indigo-600 text-sm",
+          data: { turbo_frame: "modal" } %>
+      <%= button_to "✕", sinking_fund_path(fund), method: :delete,
+          class: "text-gray-400 hover:text-red-500 text-sm bg-transparent border-0 cursor-pointer",
+          data: { turbo_confirm: "Delete #{fund.name}?" } %>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="mb-3">
+    <div class="flex justify-between text-sm mb-1">
+      <span class="font-medium text-gray-900"><%= money(fund.current_amount) %></span>
+      <span class="text-gray-400">/ <%= money(fund.goal_amount) %></span>
+    </div>
+    <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+      <div class="h-full rounded-full <%= fund.funded? ? 'bg-green-500' : 'bg-indigo-500' %>"
+           style="width: <%= fund.percent_complete %>%"></div>
+    </div>
+    <div class="flex justify-between mt-1">
+      <span class="text-xs text-gray-400"><%= fund.percent_complete %>% funded</span>
+      <% if fund.monthly_needed&.positive? %>
+        <span class="text-xs text-gray-400"><%= money(fund.monthly_needed) %>/mo needed</span>
+      <% end %>
+    </div>
+  </div>
+
+  <% if fund.notes.present? %>
+    <p class="text-xs text-gray-500 mb-3"><%= fund.notes %></p>
+  <% end %>
+
+  <!-- Deposit / Withdraw -->
+  <div class="flex gap-2 mt-3 pt-3 border-t border-gray-100">
+    <%= form_with url: deposit_sinking_fund_path(fund), method: :patch,
+        class: "flex gap-1 flex-1",
+        data: { turbo_stream: true } do |f| %>
+      <%= f.number_field :amount, placeholder: "0.00", step: "0.01", min: "0.01",
+          class: "flex-1 border border-gray-300 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500" %>
+      <%= f.submit "+ Add", class: "bg-indigo-600 text-white px-2 py-1 rounded-md text-xs font-medium hover:bg-indigo-700 cursor-pointer" %>
+    <% end %>
+    <%= form_with url: withdraw_sinking_fund_path(fund), method: :patch,
+        class: "flex gap-1",
+        data: { turbo_stream: true } do |f| %>
+      <%= f.submit "− Use", class: "bg-gray-100 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-200 cursor-pointer" %>
+    <% end %>
+  </div>
+</div>

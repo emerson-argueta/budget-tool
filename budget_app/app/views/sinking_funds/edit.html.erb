@@ -1,0 +1,47 @@
+<turbo-frame id="modal">
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
+      <h2 class="text-lg font-semibold mb-4">Edit Sinking Fund</h2>
+      <%= form_with model: @fund do |f| %>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex gap-2">
+            <div class="w-14">
+              <%= f.label :emoji, "Icon", class: "block text-xs font-medium text-gray-500 mb-1" %>
+              <%= f.text_field :emoji, class: "w-full border border-gray-300 rounded-lg px-2 py-2 text-center text-xl focus:outline-none focus:ring-2 focus:ring-indigo-500", maxlength: 2 %>
+            </div>
+            <div class="flex-1">
+              <%= f.label :name, "Name", class: "block text-xs font-medium text-gray-500 mb-1" %>
+              <%= f.text_field :name, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+            </div>
+          </div>
+          <div>
+            <%= f.label :goal_amount, "Goal", class: "block text-xs font-medium text-gray-500 mb-1" %>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-gray-400 text-sm">$</span>
+              <%= f.number_field :goal_amount, step: "0.01", min: 0, class: "w-full border border-gray-300 rounded-lg pl-7 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+            </div>
+          </div>
+          <div>
+            <%= f.label :current_amount, "Current", class: "block text-xs font-medium text-gray-500 mb-1" %>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-gray-400 text-sm">$</span>
+              <%= f.number_field :current_amount, step: "0.01", min: 0, class: "w-full border border-gray-300 rounded-lg pl-7 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+            </div>
+          </div>
+          <div>
+            <%= f.label :target_date, "Target Date", class: "block text-xs font-medium text-gray-500 mb-1" %>
+            <%= f.date_field :target_date, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+          </div>
+          <div class="col-span-2">
+            <%= f.label :notes, "Notes", class: "block text-xs font-medium text-gray-500 mb-1" %>
+            <%= f.text_area :notes, rows: 2, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+          <%= link_to "Cancel", sinking_funds_path, class: "btn-secondary", data: { turbo_frame: "_top" } %>
+          <%= f.submit "Save", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</turbo-frame>
