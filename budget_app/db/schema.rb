@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_09_210000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_21_134302) do
   create_table "accounts", force: :cascade do |t|
     t.string "account_type"
     t.decimal "available_balance", precision: 10, scale: 2
@@ -117,6 +117,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_210000) do
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
+    t.boolean "otp_required_for_login", default: false, null: false
+    t.string "otp_secret"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"

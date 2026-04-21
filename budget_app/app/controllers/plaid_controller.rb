@@ -1,8 +1,16 @@
 class PlaidController < ApplicationController
   def link
-    @link_token = PlaidService.new.create_link_token(current_user.id).link_token
     @exchange_url = plaid_exchange_token_path
     @return_url   = accounts_path
+    @oauth_redirect = params[:oauth_state_id].present?
+
+    if @oauth_redirect && session[:plaid_link_token].present?
+      @link_token = session[:plaid_link_token]
+    else
+      redirect_uri = ENV["PLAID_REDIRECT_URI"].presence
+      @link_token = PlaidService.new.create_link_token(current_user.id, redirect_uri: redirect_uri).link_token
+      session[:plaid_link_token] = @link_token
+    end
   rescue Plaid::ApiError => e
     redirect_to accounts_path, alert: "Plaid error: #{e.message}"
   end
@@ -49,6 +57,7 @@ class PlaidController < ApplicationController
     # Kick off initial sync
     SyncTransactionsJob.perform_later(plaid_item.id)
 
+    session.delete(:plaid_link_token)
     render json: { success: true, institution: institution_name }
   rescue Plaid::ApiError => e
     render json: { error: e.message }, status: :unprocessable_entity

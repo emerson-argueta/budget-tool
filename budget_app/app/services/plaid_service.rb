@@ -7,15 +7,16 @@ class PlaidService
     @client = Plaid::PlaidApi.new(Plaid::ApiClient.new(configuration))
   end
 
-  def create_link_token(user_id)
-    request = Plaid::LinkTokenCreateRequest.new(
+  def create_link_token(user_id, redirect_uri: nil)
+    params = {
       user: Plaid::LinkTokenCreateRequestUser.new(client_user_id: user_id.to_s),
       client_name: "Budget App",
       products: ["transactions"],
       country_codes: ["US"],
       language: "en"
-    )
-    @client.link_token_create(request)
+    }
+    params[:redirect_uri] = redirect_uri if redirect_uri.present?
+    @client.link_token_create(Plaid::LinkTokenCreateRequest.new(**params))
   end
 
   def exchange_public_token(public_token)

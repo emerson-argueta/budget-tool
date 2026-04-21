@@ -2,6 +2,22 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  def totp
+    ROTP::TOTP.new(otp_secret, issuer: "Budget App")
+  end
+
+  def otp_provisioning_uri
+    totp.provisioning_uri(email)
+  end
+
+  def verify_otp(code)
+    totp.verify(code.to_s.strip, drift_behind: 30, drift_ahead: 30)
+  end
+
+  def generate_otp_secret!
+    update!(otp_secret: ROTP::Base32.random)
+  end
+
   has_many :plaid_items, dependent: :destroy
   has_many :accounts, through: :plaid_items
   has_many :transactions, through: :accounts

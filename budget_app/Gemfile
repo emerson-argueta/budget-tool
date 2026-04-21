@@ -43,6 +43,8 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 gem "devise"
+gem "rotp"
+gem "rqrcode"
 gem "plaid"
 gem "pagy"
 gem "chartkick"

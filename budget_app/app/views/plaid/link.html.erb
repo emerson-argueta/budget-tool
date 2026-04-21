@@ -6,10 +6,11 @@
 
 <script>
   (function() {
-    const linkToken   = "<%= @link_token %>";
-    const exchangeUrl = "<%= @exchange_url %>";
-    const returnUrl   = "<%= @return_url %>";
-    const csrfToken   = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+    const linkToken    = "<%= @link_token %>";
+    const exchangeUrl  = "<%= @exchange_url %>";
+    const returnUrl    = "<%= @return_url %>";
+    const isOAuthReturn = <%= @oauth_redirect ? "true" : "false" %>;
+    const csrfToken    = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
 
     function setStatus(msg) {
       document.getElementById("plaid-status").innerHTML =
@@ -23,7 +24,7 @@
         return;
       }
 
-      var handler = Plaid.create({
+      var config = {
         token: linkToken,
         onSuccess: function(publicToken, metadata) {
           setStatus("Saving connection…");
@@ -42,17 +43,29 @@
             } else {
               setStatus("Error: " + (data.error || "Unknown error"));
             }
+          })
+          .catch(function(err) {
+            setStatus("Network error: " + err.message);
           });
         },
         onExit: function(err, metadata) {
-          window.location = returnUrl;
+          if (err) {
+            setStatus("Error: " + (err.display_message || err.error_message || err.error_code || JSON.stringify(err)));
+          } else {
+            window.location = returnUrl;
+          }
         }
-      });
+      };
 
+      // OAuth return: re-initialize Link and it will resume the flow automatically
+      if (isOAuthReturn) {
+        config.receivedRedirectUri = window.location.href;
+      }
+
+      var handler = Plaid.create(config);
       handler.open();
     }
 
-    // Small delay to ensure DOM + Plaid script are ready
     setTimeout(openLink, 100);
   })();
 </script>

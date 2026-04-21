@@ -10,13 +10,9 @@
   </div>
 </div>
 
-<% if flash[:notice] %>
-  <div class="mb-4 bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 text-sm">
-    <%= flash[:notice] %>
-  </div>
-<% end %>
+<%= render "shared/flash" %>
 
-<% if @plaid_items.empty? %>
+<% if @plaid_items.empty? && @cash_account.nil? %>
   <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
     <p class="text-4xl mb-4">🏦</p>
     <p class="text-gray-600 font-medium mb-2">No banks connected yet</p>
@@ -25,11 +21,18 @@
   </div>
 <% else %>
   <div class="space-y-4">
+
+    <!-- Bank accounts -->
     <% @plaid_items.each do |item| %>
-      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <% tx_count = item.accounts.sum { |a| a.transactions.count } %>
+      <div id="plaid_item_<%= item.id %>" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
           <h2 class="font-semibold text-gray-900"><%= item.institution_name %></h2>
-          <span class="text-xs text-gray-400">Last synced: recently</span>
+          <%= button_to "Disconnect",
+              plaid_item_path(item),
+              method: :delete,
+              class: "text-xs text-red-500 hover:text-red-700 bg-transparent border border-red-200 hover:border-red-400 rounded px-2 py-1 cursor-pointer",
+              data: { turbo_confirm: "Disconnect #{item.institution_name}?\n\nThis will permanently delete #{item.accounts.count} account#{"s" if item.accounts.count != 1} and #{tx_count} transaction#{"s" if tx_count != 1}. Manual (cash) transactions will be kept.\n\nThis cannot be undone." } %>
         </div>
         <div class="divide-y divide-gray-100">
           <% item.accounts.each do |account| %>
@@ -49,5 +52,29 @@
         </div>
       </div>
     <% end %>
+
+    <!-- Cash / manual transactions -->
+    <% if @cash_account %>
+      <% cash_tx_count = @cash_account.transactions.count %>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <h2 class="font-semibold text-gray-900">Cash</h2>
+            <p class="text-xs text-gray-400">Manual transactions</p>
+          </div>
+          <% if cash_tx_count > 0 %>
+            <%= button_to "Clear all (#{cash_tx_count})",
+                clear_cash_accounts_path,
+                method: :delete,
+                class: "text-xs text-red-500 hover:text-red-700 bg-transparent border border-red-200 hover:border-red-400 rounded px-2 py-1 cursor-pointer",
+                data: { turbo_confirm: "Delete all #{cash_tx_count} manual transaction#{"s" if cash_tx_count != 1}? This cannot be undone." } %>
+          <% end %>
+        </div>
+        <div class="px-6 py-4 text-sm text-gray-500">
+          <%= cash_tx_count %> manual transaction<%= "s" if cash_tx_count != 1 %>
+        </div>
+      </div>
+    <% end %>
+
   </div>
 <% end %>
