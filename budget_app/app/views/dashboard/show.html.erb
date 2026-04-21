@@ -114,8 +114,9 @@
                   <p class="text-xs font-medium text-gray-900 truncate"><%= txn.display_name %></p>
                   <p class="text-xs text-gray-400"><%= txn.date.strftime("%b %-d") %> · <%= txn.budget_category&.name || "Unassigned" %></p>
                 </div>
-                <span class="text-xs font-medium whitespace-nowrap <%= txn.amount.negative? ? 'text-green-600' : 'text-gray-700' %>">
-                  <%= money(txn.amount) %>
+                <% display_amount = -txn.amount %>
+                <span class="text-xs font-medium whitespace-nowrap <%= display_amount.positive? ? 'text-green-600' : 'text-red-600' %>">
+                  <%= display_amount.positive? ? "+#{money(display_amount)}" : money(display_amount) %>
                 </span>
               </div>
             <% end %>
