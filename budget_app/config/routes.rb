@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "privacy-policy", to: "pages#privacy_policy", as: :privacy_policy
   devise_for :users, controllers: { sessions: "users/sessions", registrations: "registrations" }
 
   get  "two_factor/setup",        to: "two_factor#setup",        as: :two_factor_setup

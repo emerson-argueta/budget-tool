@@ -1,0 +1,46 @@
+<%= content_for :title, "Privacy Policy" %>
+
+<h2 class="text-xl font-semibold text-gray-900 mb-1">Privacy Policy</h2>
+<p class="text-xs text-gray-400 mb-6">Effective date: April 21, 2026</p>
+
+<div class="space-y-4 text-sm text-gray-700">
+  <div>
+    <p class="font-medium text-gray-900 mb-1">Overview</p>
+    <p>Budget is a personal finance application operated by a single individual for personal use only. This policy describes how financial data accessed through Plaid is collected, used, and protected.</p>
+  </div>
+
+  <div>
+    <p class="font-medium text-gray-900 mb-1">Data Collected</p>
+    <p>This application collects bank account information and transaction history via the Plaid API, including account balances, account names, and transaction details. No data is collected from any user other than the application owner.</p>
+  </div>
+
+  <div>
+    <p class="font-medium text-gray-900 mb-1">How Data Is Used</p>
+    <p>Data is used solely for personal budgeting and financial tracking. It is never shared with third parties, sold, or used for any commercial purpose.</p>
+  </div>
+
+  <div>
+    <p class="font-medium text-gray-900 mb-1">Data Storage</p>
+    <p>All data is stored in a SQLite database on a private Linux server accessible only via Tailscale VPN. The server is not publicly accessible on the internet.</p>
+  </div>
+
+  <div>
+    <p class="font-medium text-gray-900 mb-1">Data Security</p>
+    <p>Access to the application requires multi-factor authentication. The server is protected by SSH key authentication and Tailscale zero-trust networking. Disk encryption is enabled at the OS level.</p>
+  </div>
+
+  <div>
+    <p class="font-medium text-gray-900 mb-1">Data Retention and Deletion</p>
+    <p>Financial data is retained for personal budgeting purposes indefinitely. The application owner may delete all data at any time by removing the database file or deleting the account.</p>
+  </div>
+
+  <div>
+    <p class="font-medium text-gray-900 mb-1">Consent</p>
+    <p>By using this application, the user (the application owner) consents to the collection and storage of their financial data via Plaid for personal budgeting purposes.</p>
+  </div>
+
+  <div>
+    <p class="font-medium text-gray-900 mb-1">Contact</p>
+    <p>Questions about this policy can be directed to emersonargueta92@gmail.com.</p>
+  </div>
+</div>
