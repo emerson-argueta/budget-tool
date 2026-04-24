@@ -104,3 +104,8 @@ budget-tool/
 - **Transactions**: Transactions sync automatically from connected banks. You can also add cash transactions manually. Each transaction is categorized against its own month's budget.
 - **Income**: Mark a transaction as income using the "+ Income" button — it will count toward that month's available balance.
 - **Reports**: View spending breakdowns, trends, and net worth under *Reports*.
+
+## License
+
+This project is licensed under the GNU General Public License v3.0.
+See the LICENSE file for details.
