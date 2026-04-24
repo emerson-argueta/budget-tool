@@ -1,6 +1,6 @@
 <%= content_for :title, "Budget — #{@budget.month_label}" %>
 
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
   <div class="flex items-center gap-4">
     <h1 class="text-2xl font-bold text-gray-900">Budget</h1>
     <!-- Month Selector -->
@@ -21,7 +21,7 @@
     <% end %>
   </div>
 
-  <div class="flex items-center gap-2">
+  <div class="flex flex-wrap items-center gap-2">
     <% prev_budget = current_user.budgets.find_by(month: @budget.month.prev_month) %>
     <% if prev_budget %>
       <%= button_to "Copy from #{prev_budget.month_label}",

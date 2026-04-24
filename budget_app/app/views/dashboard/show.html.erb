@@ -1,6 +1,6 @@
 <%= content_for :title, "Dashboard" %>
 
-<div class="mb-6 flex items-center justify-between">
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold text-gray-900"><%= @month_label %></h1>
   <div class="flex gap-2">
     <% if current_user.plaid_items.any? %>
@@ -21,7 +21,7 @@
 <% else %>
 
   <!-- Monthly Snapshot -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-xl border border-gray-200 p-5">
       <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Income</p>
       <p class="text-2xl font-bold text-gray-900"><%= money(@total_income) %></p>

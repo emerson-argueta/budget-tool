@@ -18,8 +18,8 @@
     </div>
   </div>
 
-  <!-- Planned (inline editable) -->
-  <div class="w-28 text-right">
+  <!-- Planned (inline editable) — hidden on mobile -->
+  <div class="hidden md:block w-28 text-right">
     <span class="text-sm text-gray-700 cursor-pointer hover:text-indigo-600 font-medium"
           data-budget-category-target="planned"
           data-action="click->budget-category#startEdit">
@@ -32,8 +32,8 @@
            value="<%= category.planned_amount %>">
   </div>
 
-  <!-- Spent -->
-  <div class="w-28 text-right">
+  <!-- Spent — hidden on mobile -->
+  <div class="hidden md:block w-28 text-right">
     <span class="text-sm text-gray-700"><%= money(category.spent) %></span>
   </div>
 
@@ -44,8 +44,8 @@
     </span>
   </div>
 
-  <!-- Actions -->
-  <div class="w-16 flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+  <!-- Actions — hidden on mobile -->
+  <div class="hidden md:flex w-16 justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
     <%= link_to "✎", edit_budget_category_path(category),
         class: "text-gray-400 hover:text-indigo-600 text-sm",
         data: { turbo_frame: "modal" } %>
