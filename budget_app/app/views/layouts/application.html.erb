@@ -30,12 +30,7 @@
 
             <%# Desktop right side %>
             <div class="hidden md:flex items-center gap-4">
-              <% unassigned = unassigned_transaction_count rescue 0 %>
-              <% if unassigned > 0 %>
-                <%= link_to unassigned_transactions_path, class: "flex items-center gap-1 text-sm text-amber-700 bg-amber-100 px-3 py-1 rounded-full hover:bg-amber-200" do %>
-                  <span class="font-semibold"><%= unassigned %></span> unassigned
-                <% end %>
-              <% end %>
+              <%= render "shared/unassigned_count" %>
               <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-sm text-gray-500 hover:text-gray-700" %>
             </div>
 

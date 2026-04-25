@@ -4,7 +4,7 @@ class DashboardController < ApplicationController
     @month_label = Date.today.strftime("%B %Y")
 
     if @budget
-      @total_income = @budget.total_income
+      @total_income = @budget.effective_income
       @total_spent = @budget.total_spent
       @remaining = @total_income - @total_spent
       @to_assign = @budget.to_assign

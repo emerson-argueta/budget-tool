@@ -1,4 +1,5 @@
-<%= form_with model: [budget, category], data: { turbo_frame: "modal" } do |f| %>
+<% form_url = category.persisted? ? budget_category_path(category) : budget_budget_categories_path(budget) %>
+<%= form_with model: category, url: form_url, data: { turbo_frame: "modal" } do |f| %>
   <div class="space-y-4">
     <div class="flex gap-3">
       <div class="w-16">

@@ -1,20 +1,24 @@
 <div id="budget_summary" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
   <div class="bg-white rounded-xl border border-gray-200 p-5">
-    <p class="text-sm text-gray-500 mb-1">Income</p>
-    <div class="flex items-center justify-between">
-      <span class="text-2xl font-bold text-gray-900"><%= money(budget.effective_income) %></span>
+    <div class="flex items-start justify-between">
+      <%= link_to income_transactions_budget_path(budget),
+          class: "flex-1 min-w-0 group",
+          data: { turbo_frame: "modal" } do %>
+        <p class="text-sm text-gray-500 group-hover:text-gray-700 mb-1">Income ↗</p>
+        <span class="text-2xl font-bold text-gray-900"><%= money(budget.effective_income) %></span>
+        <% if budget.transaction_income > 0 %>
+          <p class="text-xs text-gray-400 mt-1">
+            <%= money(budget.transaction_income) %> from transactions
+            <% if budget.total_income > 0 %>
+              + <%= money(budget.total_income) %> manual
+            <% end %>
+          </p>
+        <% end %>
+      <% end %>
       <%= link_to "edit", edit_budget_path(budget),
-          class: "text-xs text-indigo-600 hover:underline",
+          class: "text-xs text-indigo-600 hover:underline ml-3 flex-shrink-0 mt-1",
           data: { turbo_frame: "modal" } %>
     </div>
-    <% if budget.transaction_income > 0 %>
-      <p class="text-xs text-gray-400 mt-1">
-        <%= money(budget.transaction_income) %> from transactions
-        <% if budget.total_income > 0 %>
-          + <%= money(budget.total_income) %> manual
-        <% end %>
-      </p>
-    <% end %>
   </div>
 
   <% to_assign = budget.to_assign %>

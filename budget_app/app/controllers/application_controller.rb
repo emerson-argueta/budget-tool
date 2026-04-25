@@ -11,6 +11,6 @@ class ApplicationController < ActionController::Base
   private
 
   def unassigned_transaction_count
-    @unassigned_transaction_count ||= current_user.transactions.where(budget_category_id: nil).count
+    @unassigned_transaction_count ||= current_user.transactions.unassigned.count
   end
 end

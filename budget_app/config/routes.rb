@@ -24,14 +24,16 @@ Rails.application.routes.draw do
   resources :budgets, param: :month do
     member do
       post :copy_previous
+      get :income_transactions
     end
     resources :budget_categories, shallow: true do
       member do
         patch :update_amount
+        get :transactions
       end
     end
   end
-  resources :transactions, only: [:index, :show, :new, :create, :update] do
+  resources :transactions, only: [:index, :show, :new, :create, :update, :destroy] do
     collection do
       get :unassigned
       patch :bulk_assign

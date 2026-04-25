@@ -1,5 +1,5 @@
 class TransactionsController < ApplicationController
-  before_action :set_transaction, only: [:show, :update]
+  before_action :set_transaction, only: [:show, :update, :destroy]
   before_action :set_accounts_and_categories, only: [:new, :create]
 
   def index
@@ -69,19 +69,60 @@ class TransactionsController < ApplicationController
         save_merchant_rule(@transaction)
       end
 
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace("transaction_#{@transaction.id}",
-              partial: "transactions/transaction",
-              locals: { transaction: @transaction }),
-            turbo_stream.replace("unassigned_count", partial: "shared/unassigned_count")
-          ]
+      streams = [
+        turbo_stream.replace("transaction_#{@transaction.id}",
+          partial: "transactions/transaction",
+          locals: { transaction: @transaction }),
+        turbo_stream.replace("unassigned_count", partial: "shared/unassigned_count")
+      ]
+
+      # Refresh budget rows + summary when category or income status changes
+      if @transaction.saved_change_to_budget_category_id? || @transaction.saved_change_to_is_income?
+        old_cat_id = @transaction.saved_changes.dig("budget_category_id", 0)
+        new_cat_id = @transaction.saved_changes.dig("budget_category_id", 1) || @transaction.budget_category_id
+        affected = BudgetCategory.includes(:budget).where(id: [old_cat_id, new_cat_id].compact.uniq)
+        budget_ids = Set.new
+        affected.each do |cat|
+          streams << turbo_stream.replace("budget_category_#{cat.id}",
+            partial: "budgets/category_row",
+            locals: { category: cat.reload, budget: cat.budget })
+          budget_ids << cat.budget_id
         end
+        # Always include the budget for this month so income toggle refreshes the summary
+        month_budget = current_user.budgets.find_by(month: @transaction.date.beginning_of_month)
+        budget_ids << month_budget.id if month_budget
+        Budget.where(id: budget_ids.to_a).each do |budget|
+          streams << turbo_stream.replace("budget_summary",
+            partial: "budgets/summary",
+            locals: { budget: budget.reload })
+        end
+      end
+
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: streams }
         format.html { redirect_back(fallback_location: transactions_path, notice: "Transaction updated.") }
       end
     else
       render json: { error: @transaction.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    unless @transaction.manual?
+      head :forbidden
+      return
+    end
+
+    @transaction.soft_delete!
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.remove("transaction_#{@transaction.id}"),
+          turbo_stream.replace("unassigned_count", partial: "shared/unassigned_count")
+        ]
+      end
+      format.html { redirect_back(fallback_location: transactions_path) }
     end
   end
 
@@ -114,7 +155,7 @@ class TransactionsController < ApplicationController
   end
 
   def transaction_params
-    params.require(:transaction).permit(:budget_category_id, :notes, :is_income)
+    params.require(:transaction).permit(:budget_category_id, :notes, :is_income, :untracked)
   end
 
   def apply_filters(scope)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_21_134302) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_25_215155) do
   create_table "accounts", force: :cascade do |t|
     t.string "account_type"
     t.decimal "available_balance", precision: 10, scale: 2
@@ -98,6 +98,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_134302) do
     t.integer "budget_category_id"
     t.datetime "created_at", null: false
     t.date "date", null: false
+    t.datetime "deleted_at"
     t.boolean "is_income", default: false, null: false
     t.string "merchant_name"
     t.string "name"
@@ -105,10 +106,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_134302) do
     t.boolean "pending", default: false
     t.string "plaid_category"
     t.string "plaid_transaction_id"
+    t.boolean "untracked", default: false, null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_transactions_on_account_id"
     t.index ["budget_category_id"], name: "index_transactions_on_budget_category_id"
     t.index ["date"], name: "index_transactions_on_date"
+    t.index ["deleted_at"], name: "index_transactions_on_deleted_at"
     t.index ["is_income"], name: "index_transactions_on_is_income"
     t.index ["plaid_transaction_id"], name: "index_transactions_on_plaid_transaction_id", unique: true, where: "plaid_transaction_id IS NOT NULL"
   end

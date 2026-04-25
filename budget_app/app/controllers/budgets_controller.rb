@@ -1,5 +1,5 @@
 class BudgetsController < ApplicationController
-  before_action :set_budget, only: [:show, :edit, :update, :copy_previous]
+  before_action :set_budget, only: [:show, :edit, :update, :copy_previous, :income_transactions]
 
   def index
     redirect_to budget_path(Date.today.strftime("%Y-%m"))
@@ -36,6 +36,16 @@ class BudgetsController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def income_transactions
+    @transactions = Transaction.income
+      .joins(account: :plaid_item)
+      .where(plaid_items: { user: current_user })
+      .for_month(@budget.month)
+      .includes(:account)
+      .recent
+    @budget_categories = @budget.budget_categories.order(:name)
   end
 
   def copy_previous

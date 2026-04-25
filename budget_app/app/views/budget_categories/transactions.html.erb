@@ -1,0 +1,28 @@
+<%= turbo_frame_tag "category_transactions_#{@category.id}" do %>
+  <div class="border-t border-gray-100">
+    <% if @transactions.empty? %>
+      <p class="px-6 py-4 text-sm text-gray-400 italic text-center">No transactions this month.</p>
+    <% else %>
+      <div class="px-6 py-2 border-b border-gray-100 flex items-center justify-between text-xs text-gray-500 bg-gray-50">
+        <span><%= pluralize(@transactions.count, "transaction") %></span>
+        <span class="font-medium"><%= money(@transactions.sum(:amount)) %> spent</span>
+      </div>
+
+      <div class="hidden md:block">
+        <table class="w-full text-sm">
+          <tbody class="divide-y divide-gray-100">
+            <% @transactions.each do |transaction| %>
+              <%= render "transactions/transaction", transaction: transaction %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="md:hidden divide-y divide-gray-100">
+        <% @transactions.each do |transaction| %>
+          <%= render "transactions/transaction_card", transaction: transaction %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

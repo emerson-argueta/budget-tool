@@ -5,14 +5,18 @@ class Transaction < ApplicationRecord
   validates :amount, presence: true
   validates :date, presence: true
 
-  scope :unassigned, -> { where(budget_category_id: nil, is_income: false) }
+  default_scope { where(deleted_at: nil) }
+
+  scope :unassigned, -> { where(budget_category_id: nil, is_income: false, untracked: false) }
   scope :assigned, -> { where.not(budget_category_id: nil) }
   scope :income, -> { where(is_income: true) }
+  scope :untracked, -> { where(untracked: true) }
   scope :for_month, ->(month) { where(date: month.beginning_of_month..month.end_of_month) }
   scope :recent, -> { order(date: :desc) }
   scope :not_pending, -> { where(pending: false) }
 
   before_save :clear_category_if_income
+  before_save :clear_if_untracked
 
   def display_name
     merchant_name.presence || name
@@ -22,10 +26,25 @@ class Transaction < ApplicationRecord
     budget_category_id.present?
   end
 
+  def manual?
+    plaid_transaction_id.nil?
+  end
+
+  def soft_delete!
+    update_columns(deleted_at: Time.current, budget_category_id: nil)
+  end
+
   private
 
   def clear_category_if_income
     self.budget_category_id = nil if is_income?
+  end
+
+  def clear_if_untracked
+    if untracked?
+      self.budget_category_id = nil
+      self.is_income = false
+    end
   end
 
   # Plaid returns positive for debits (spending), negative for credits (income)

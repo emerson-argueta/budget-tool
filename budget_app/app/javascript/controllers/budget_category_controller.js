@@ -1,10 +1,28 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["planned", "input"]
-  static values = { updateUrl: String }
+  static targets = ["planned", "input", "drawer", "chevron"]
+  static values = { updateUrl: String, transactionsUrl: String }
 
-  startEdit() {
+  toggleTransactions() {
+    const drawer = this.drawerTarget
+    const chevron = this.chevronTarget
+    const frame = drawer.querySelector("turbo-frame")
+
+    if (drawer.classList.contains("hidden")) {
+      if (frame && !frame.getAttribute("src")) {
+        frame.setAttribute("src", this.transactionsUrlValue)
+      }
+      drawer.classList.remove("hidden")
+      chevron.style.transform = "rotate(90deg)"
+    } else {
+      drawer.classList.add("hidden")
+      chevron.style.transform = ""
+    }
+  }
+
+  startEdit(event) {
+    event.stopPropagation()
     this.plannedTarget.classList.add("hidden")
     this.inputTarget.classList.remove("hidden")
     this.inputTarget.focus()

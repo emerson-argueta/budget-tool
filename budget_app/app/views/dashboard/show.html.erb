@@ -23,8 +23,12 @@
   <!-- Monthly Snapshot -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-xl border border-gray-200 p-5">
-      <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Income</p>
-      <p class="text-2xl font-bold text-gray-900"><%= money(@total_income) %></p>
+      <%= link_to income_transactions_budget_path(@budget),
+          class: "group block",
+          data: { turbo_frame: "modal" } do %>
+        <p class="text-xs font-medium text-gray-500 group-hover:text-gray-700 uppercase tracking-wide mb-1">Income ↗</p>
+        <p class="text-2xl font-bold text-gray-900"><%= money(@total_income) %></p>
+      <% end %>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 p-5">
       <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Spent</p>

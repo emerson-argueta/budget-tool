@@ -1,5 +1,5 @@
 class BudgetCategoriesController < ApplicationController
-  before_action :set_budget_category, only: [:edit, :update, :destroy, :update_amount]
+  before_action :set_budget_category, only: [:edit, :update, :destroy, :update_amount, :transactions]
   before_action :set_budget, only: [:new, :create]
 
   def new
@@ -65,6 +65,11 @@ class BudgetCategoriesController < ApplicationController
     else
       render json: { error: @category.errors.full_messages.join(", ") }, status: :unprocessable_entity
     end
+  end
+
+  def transactions
+    @transactions = @category.transactions.for_month(@category.budget.month).recent
+    @budget_categories = @category.budget.budget_categories.order(:name)
   end
 
   def destroy
