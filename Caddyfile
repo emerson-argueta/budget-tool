@@ -1,5 +1,0 @@
-informations-macbook-pro-2.tail7c01f9.ts.net:443 {
-  bind 100.82.32.53
-  tls /Users/emerson/Development/personal/budget-tool/budget_app/informations-macbook-pro-2.tail7c01f9.ts.net.crt /Users/emerson/Development/personal/budget-tool/budget_app/informations-macbook-pro-2.tail7c01f9.ts.net.key
-  reverse_proxy localhost:3000
-}

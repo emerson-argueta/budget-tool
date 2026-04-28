@@ -70,24 +70,13 @@ OAuth banks (Chase, SoFi, Bank of America, etc.) require a registered redirect U
 
 ## Running with HTTPS (Tailscale)
 
-For access over Tailscale with proper HTTPS, use Caddy as a reverse proxy:
+Use `tailscale serve` to expose the app with automatic HTTPS on your Tailnet:
 
 ```bash
-brew install caddy
-tailscale cert your-machine-name.your-tailnet.ts.net
+tailscale serve --bg 3000
 ```
 
-Create a `Caddyfile`:
-
-```
-your-machine-name.your-tailnet.ts.net:443 {
-  bind <tailscale-ip>
-  tls /path/to/cert.crt /path/to/cert.key
-  reverse_proxy localhost:3000
-}
-```
-
-Then run `sudo caddy run` alongside `bin/rails server`.
+This proxies `https://your-machine-name.your-tailnet.ts.net` to the Rails server on port 3000. Tailscale handles TLS cert issuance and renewal automatically.
 
 ## MFA Setup
 
